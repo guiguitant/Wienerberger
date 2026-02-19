@@ -5,7 +5,7 @@ const db = createClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd5bHl0dW1qa21haHpqZndka3ljIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzcyNzIsImV4cCI6MjA4NzAxMzI3Mn0.6mFhWHP6dFDr4oCGdB2x2Nv_Z5KP_X72kcaQ6wBWgLo'
 );
 
-// ── Constantes ──
+// ── Statuts FDES ──
 const STATUSES = [
   'Lancement',
   'En cours de collecte',
@@ -19,8 +19,53 @@ const STAT_LABELS = [
   'Lancement', 'Collecte', 'Modélisation', 'Rapport', 'Vérification', 'Vérifié'
 ];
 
+// ── Structure du formulaire de collecte ──
+const COLLECTE_ONGLETS = [
+  {
+    onglet: 'organisation',
+    label: 'Organisation',
+    fields: [
+      { champ: 'nom_societe',   label: 'Nom de la société',    type: 'text',   unite: null },
+      { champ: 'nom_referent',  label: 'Nom du référent',      type: 'text',   unite: null },
+      { champ: 'email_referent',label: 'Email du référent',    type: 'email',  unite: null },
+      { champ: 'nom_usine',     label: "Nom de l'usine / site",type: 'text',   unite: null },
+    ]
+  },
+  {
+    onglet: 'infos_generales',
+    label: 'Infos générales',
+    fields: [
+      { champ: 'annee_reference',   label: 'Année de référence',           type: 'number', unite: null },
+      { champ: 'production_totale', label: 'Production totale du site',    type: 'number', unite: 't'  },
+      { champ: 'casse_cuite',       label: 'Casse cuite totale du site',   type: 'number', unite: 't'  },
+    ]
+  },
+  {
+    onglet: 'energie',
+    label: 'Énergie',
+    fields: [
+      { champ: 'gaz_naturel',       label: 'Gaz naturel',       type: 'number', unite: 'm³'   },
+      { champ: 'electricite',       label: 'Électricité',       type: 'number', unite: 'kWh'  },
+      { champ: 'autre_combustible', label: 'Autre combustible', type: 'number', unite: 'libre'},
+    ]
+  },
+  {
+    onglet: 'matieres_premieres',
+    label: 'Matières premières',
+    fields: [
+      { champ: 'eau_potable',    label: 'Eau potable réseau', type: 'number', unite: 'kg'   },
+      { champ: 'eau_forage',     label: 'Eau de forage',      type: 'number', unite: 'kg'   },
+      { champ: 'argiles',        label: 'Argiles',            type: 'number', unite: 'kg'   },
+      { champ: 'chamotte',       label: 'Chamotte',           type: 'number', unite: 'kg'   },
+      { champ: 'autres_matieres',label: 'Autres matières',    type: 'number', unite: 'libre'},
+    ]
+  }
+];
+
+// ── État global ──
 let fdes = [];
-let currentDetailId = null;
+let currentDetailId  = null;
+let currentCollecteId = null;
 
 // ── Utilitaires ──
 function fmt(iso) {
@@ -48,7 +93,7 @@ function deadlineChip(deadline) {
   return `<span class="deadline-chip dl-ok">${dl.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })}</span>`;
 }
 
-// ── Supabase : opérations ──
+// ── Supabase : FDES ──
 async function loadFdes() {
   const { data, error } = await db
     .from('fdes')
@@ -83,7 +128,7 @@ async function removeFdes(id) {
   return true;
 }
 
-// ── Vue détail ──
+// ── Vue Détail ──
 function openDetail(id) {
   currentDetailId = id;
   const f = fdes.find(x => x.id === id);
@@ -102,6 +147,14 @@ function closeDetail() {
 function renderDetail(f) {
   document.getElementById('detailCard').innerHTML = `
     <div class="detail-name">${escHtml(f.nom)}</div>
+    <div class="detail-actions">
+      <button class="btn btn-primary" onclick="openCollecte('${f.id}')">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+          <path d="M1 2h11M1 6.5h11M1 11h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+        Formulaire de collecte
+      </button>
+    </div>
     <div class="detail-field">
       <div class="detail-field-label">Statut</div>
       <span class="status-badge s${f.statut}" style="font-size:13px">
@@ -136,11 +189,162 @@ async function changeStatusFromDetail(id, val) {
   }
 }
 
+// ── Vue Collecte ──
+async function openCollecte(fdesId) {
+  currentCollecteId = fdesId;
+  const f = fdes.find(x => x.id === fdesId);
+
+  // Titre
+  document.getElementById('collecteFdesName').textContent = f ? f.nom : '';
+
+  // Générer le formulaire
+  renderCollecteForm();
+
+  // Afficher la vue
+  document.getElementById('viewDetail').style.display = 'none';
+  document.getElementById('viewCollecte').style.display = 'block';
+
+  // Préremplir avec les données existantes
+  await loadCollecteData(fdesId);
+}
+
+function closeCollecte() {
+  currentCollecteId = null;
+  document.getElementById('viewCollecte').style.display = 'none';
+  document.getElementById('viewDetail').style.display = 'block';
+}
+
+function renderCollecteForm() {
+  const tabsHtml = COLLECTE_ONGLETS.map((o, i) =>
+    `<button class="tab-btn ${i === 0 ? 'active' : ''}" onclick="switchTab(${i})">${o.label}</button>`
+  ).join('');
+
+  const panelsHtml = COLLECTE_ONGLETS.map((o, i) =>
+    `<div class="tab-panel ${i === 0 ? 'active' : ''}" id="panel-${i}">
+      ${o.fields.map(renderCollecteField).join('')}
+    </div>`
+  ).join('');
+
+  document.getElementById('collecteForm').innerHTML = `
+    <div class="tabs">${tabsHtml}</div>
+    ${panelsHtml}
+    <div class="collecte-save-bar">
+      <button class="btn btn-primary" onclick="saveCollecte()" id="saveBtn">Sauvegarder</button>
+      <span class="save-feedback" id="saveFeedback">✓ Données sauvegardées</span>
+    </div>
+  `;
+}
+
+function renderCollecteField(field) {
+  let inputHtml;
+
+  if (field.unite === null) {
+    // Champ texte simple, sans unité
+    inputHtml = `
+      <div class="collecte-input-row">
+        <input type="${field.type}" class="collecte-input" id="val_${field.champ}" placeholder="" />
+      </div>`;
+  } else if (field.unite === 'libre') {
+    // Valeur + unité libre saisie par l'utilisateur
+    inputHtml = `
+      <div class="collecte-input-row">
+        <input type="number" class="collecte-input" id="val_${field.champ}" placeholder="0" step="any" />
+        <input type="text" class="collecte-unit-input" id="unit_${field.champ}" placeholder="unité" />
+      </div>`;
+  } else {
+    // Valeur + unité fixe
+    inputHtml = `
+      <div class="collecte-input-row">
+        <input type="number" class="collecte-input" id="val_${field.champ}" placeholder="0" step="any" />
+        <span class="collecte-unit-badge">${field.unite}</span>
+      </div>`;
+  }
+
+  return `
+    <div class="collecte-field">
+      <label for="val_${field.champ}">${field.label}</label>
+      ${inputHtml}
+    </div>`;
+}
+
+function switchTab(idx) {
+  document.querySelectorAll('.tab-btn').forEach((btn, i) => btn.classList.toggle('active', i === idx));
+  document.querySelectorAll('.tab-panel').forEach((panel, i) => panel.classList.toggle('active', i === idx));
+}
+
+async function loadCollecteData(fdesId) {
+  const { data, error } = await db
+    .from('fdes_collecte')
+    .select('*')
+    .eq('fdes_id', fdesId);
+
+  if (error) { console.error('Erreur chargement collecte :', error.message); return; }
+
+  (data || []).forEach(row => {
+    const valInput  = document.getElementById(`val_${row.champ}`);
+    const unitInput = document.getElementById(`unit_${row.champ}`);
+    if (valInput)  valInput.value  = row.valeur || '';
+    if (unitInput) unitInput.value = row.unite  || '';
+  });
+}
+
+async function saveCollecte() {
+  const saveBtn  = document.getElementById('saveBtn');
+  const feedback = document.getElementById('saveFeedback');
+  saveBtn.disabled = true;
+  saveBtn.textContent = 'Sauvegarde…';
+
+  // Construire les lignes depuis tous les champs
+  const rows = [];
+  COLLECTE_ONGLETS.forEach(o => {
+    o.fields.forEach(field => {
+      const valInput  = document.getElementById(`val_${field.champ}`);
+      const unitInput = document.getElementById(`unit_${field.champ}`);
+      if (!valInput) return;
+
+      const valeur = valInput.value.trim();
+      let unite = '';
+      if (field.unite === 'libre') {
+        unite = unitInput ? unitInput.value.trim() : '';
+      } else if (field.unite !== null) {
+        unite = field.unite;
+      }
+
+      rows.push({ fdes_id: currentCollecteId, onglet: o.onglet, champ: field.champ, valeur, unite });
+    });
+  });
+
+  // Supprimer les anciennes données puis insérer les nouvelles
+  const { error: delError } = await db.from('fdes_collecte').delete().eq('fdes_id', currentCollecteId);
+  if (delError) {
+    console.error('Erreur suppression collecte :', delError.message);
+    saveBtn.disabled = false;
+    saveBtn.textContent = 'Sauvegarder';
+    return;
+  }
+
+  const nonEmpty = rows.filter(r => r.valeur !== '');
+  if (nonEmpty.length > 0) {
+    const { error: insError } = await db.from('fdes_collecte').insert(nonEmpty);
+    if (insError) {
+      console.error('Erreur insertion collecte :', insError.message);
+      saveBtn.disabled = false;
+      saveBtn.textContent = 'Sauvegarder';
+      return;
+    }
+  }
+
+  saveBtn.disabled = false;
+  saveBtn.textContent = 'Sauvegarder';
+  feedback.classList.add('show');
+  setTimeout(() => feedback.classList.remove('show'), 3000);
+}
+
 // ── Tableau & Stats ──
 function render() {
-  const tbody = document.getElementById('tbody');
-  const empty = document.getElementById('empty');
-  const stats = document.getElementById('stats');
+  const tbody      = document.getElementById('tbody');
+  const empty      = document.getElementById('empty');
+  const stats      = document.getElementById('stats');
   const progressRow = document.getElementById('progressRow');
 
   const counts = [0, 0, 0, 0, 0, 0];
@@ -230,11 +434,11 @@ function handleOverlayClick(e) {
 }
 
 async function addFdes() {
-  const nom = document.getElementById('inputName').value.trim();
+  const nom          = document.getElementById('inputName').value.trim();
   const bureau_etudes = document.getElementById('inputBureau').value.trim();
-  const statut = parseInt(document.getElementById('inputStatus').value);
-  const deadline = document.getElementById('inputDeadline').value;
-  const err = document.getElementById('errName');
+  const statut       = parseInt(document.getElementById('inputStatus').value);
+  const deadline     = document.getElementById('inputDeadline').value;
+  const err          = document.getElementById('errName');
 
   if (!nom) { err.classList.add('show'); return; }
   err.classList.remove('show');
@@ -250,9 +454,9 @@ async function addFdes() {
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
     if (document.getElementById('overlay').classList.contains('open')) closeModal();
+    else if (currentCollecteId !== null) closeCollecte();
     else if (currentDetailId !== null) closeDetail();
   }
-  if (e.key === 'Enter' && document.getElementById('overlay').classList.contains('open')) addFdes();
 });
 
 // ── Init ──
