@@ -25,6 +25,7 @@ const COLLECTE_ONGLETS = [
     onglet: 'organisation',
     label: 'Organisation',
     emoji: '🏢',
+    modules: [],
     fields: [
       { champ: 'nom_societe',   label: 'Nom de la société',     type: 'text',  unite: null },
       { champ: 'nom_referent',  label: 'Nom du référent',       type: 'text',  unite: null },
@@ -36,6 +37,7 @@ const COLLECTE_ONGLETS = [
     onglet: 'infos_generales',
     label: 'Infos générales',
     emoji: '📋',
+    modules: [],
     fields: [
       { champ: 'annee_reference',   label: 'Année de référence',         type: 'number', unite: null },
       { champ: 'production_totale', label: 'Production totale du site',  type: 'number', unite: 't'  },
@@ -46,6 +48,7 @@ const COLLECTE_ONGLETS = [
     onglet: 'energie',
     label: 'Énergie',
     emoji: '⚡',
+    modules: ['A3'],
     fields: [
       { champ: 'gaz_naturel',       label: 'Gaz naturel',       type: 'number', unite: 'm³'    },
       { champ: 'electricite',       label: 'Électricité',       type: 'number', unite: 'kWh'   },
@@ -56,6 +59,7 @@ const COLLECTE_ONGLETS = [
     onglet: 'matieres_premieres',
     label: 'Matières premières',
     emoji: '🪨',
+    modules: ['A1', 'A2'],
     fields: [
       { champ: 'eau_potable',    label: 'Eau potable réseau', type: 'number', unite: 'kg'    },
       { champ: 'eau_forage',     label: 'Eau de forage',      type: 'number', unite: 'kg'    },
@@ -68,6 +72,7 @@ const COLLECTE_ONGLETS = [
     onglet: 'emissions_air',
     label: "Émissions dans l'air",
     emoji: '💨',
+    modules: ['A3'],
     fields: [
       { champ: 'co2_fossile',       label: 'CO2 fossile combustion',          type: 'number', unite: 'kg CO2' },
       { champ: 'energie_combustion',label: 'Énergie liée à la combustion GN', type: 'number', unite: 'MJ'    },
@@ -78,6 +83,7 @@ const COLLECTE_ONGLETS = [
     onglet: 'emballages',
     label: 'Emballages',
     emoji: '📦',
+    modules: ['A3', 'A5'],
     fields: [
       { champ: 'masse_produit_palette', label: 'Masse produit sur palette', type: 'number', unite: 'kg/palette' },
       { champ: 'type_emballage',        label: "Type d'emballage",          type: 'text',   unite: null         },
@@ -88,6 +94,7 @@ const COLLECTE_ONGLETS = [
     onglet: 'dechets',
     label: 'Déchets',
     emoji: '🗑️',
+    modules: ['A3'],
     fields: [
       { champ: 'dechets_recycles', label: 'Déchets recyclés',       type: 'number', unite: 't'   },
       { champ: 'dechets_elimines', label: 'Déchets éliminés',       type: 'number', unite: 't'   },
@@ -98,6 +105,7 @@ const COLLECTE_ONGLETS = [
     onglet: 'transports',
     label: 'Transports',
     emoji: '🚛',
+    modules: ['A2', 'A4'],
     fields: [
       { champ: 'distance_matieres', label: 'Distance transport matières premières', type: 'number', unite: 'km'  },
       { champ: 'type_transport',    label: 'Type de transport',                     type: 'text',   unite: null  },
@@ -108,6 +116,7 @@ const COLLECTE_ONGLETS = [
     onglet: 'mise_en_oeuvre',
     label: 'Mise en œuvre',
     emoji: '🔧',
+    modules: ['A5'],
     fields: [
       { champ: 'type_fixation',       label: 'Type de fixation',          type: 'text',   unite: null    },
       { champ: 'masse_agrafe',        label: 'Masse agrafe / vis',        type: 'number', unite: 'kg/m²' },
@@ -119,6 +128,7 @@ const COLLECTE_ONGLETS = [
     onglet: 'fin_de_vie',
     label: 'Fin de vie',
     emoji: '♻️',
+    modules: ['C1', 'C2', 'C3', 'C4', 'D'],
     fields: [
       { champ: 'qte_collectee',       label: 'Quantité collectée séparément',    type: 'number', unite: 'kg' },
       { champ: 'qte_recyclage',       label: 'Quantité destinée au recyclage',   type: 'number', unite: 'kg' },
@@ -332,10 +342,14 @@ function renderFdesRightGrid() {
     const { filled, total } = getCompletion(o);
     const pct      = total > 0 ? Math.round((filled / total) * 100) : 0;
     const complete = filled === total && total > 0;
+    const badgesHtml = o.modules.length
+      ? `<div class="section-modules">${o.modules.map(m => `<span class="module-badge">${m}</span>`).join('')}</div>`
+      : '';
     return `
       <div class="section-card${complete ? ' complete' : ''}" onclick="openOngletRight(${i})">
         <span class="section-card-emoji">${o.emoji}</span>
         <div class="section-card-title">${o.label}</div>
+        ${badgesHtml}
         <div class="section-progress-bar">
           <div class="section-progress-fill" style="width:${pct}%"></div>
         </div>
