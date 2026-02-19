@@ -113,7 +113,7 @@ let collecteData      = {};
 // ── Navigation centrale ──
 function showView(viewId) {
   ['viewDashboard', 'viewFdes', 'viewContacts'].forEach(id => {
-    document.getElementById(id).style.display = (id === viewId) ? '' : 'none';
+    document.getElementById(id).style.display = (id === viewId) ? 'block' : 'none';
   });
   document.getElementById('navDashboard').classList.toggle('active', viewId === 'viewDashboard');
   document.getElementById('navContacts').classList.toggle('active',  viewId === 'viewContacts');
@@ -185,15 +185,16 @@ function renderContacts() {
 }
 
 function renderContactBlock(title, list, type) {
-  const emptyHtml = list.length === 0
+  const listHtml = list.length === 0
     ? `<div class="contacts-empty">Aucun contact pour l'instant.</div>`
-    : list.map(c => `
+    : `<div class="contacts-list">${list.map(c => `
         <div class="contact-card">
+          <div class="contact-avatar">${escHtml(c.nom).charAt(0).toUpperCase()}</div>
           <div class="contact-info">
             <div class="contact-name">${escHtml(c.nom)}</div>
             <div class="contact-meta">
-              ${c.email     ? `<span>${escHtml(c.email)}</span>` : ''}
-              ${c.telephone ? `<span>${escHtml(c.telephone)}</span>` : ''}
+              ${c.email     ? escHtml(c.email)     : ''}
+              ${c.telephone ? ` · ${escHtml(c.telephone)}` : ''}
             </div>
           </div>
           <button class="btn-icon" onclick="deleteContact('${c.id}')" title="Supprimer">
@@ -201,21 +202,19 @@ function renderContactBlock(title, list, type) {
               <path d="M2 3h9M5 3V2h3v1M3 3l.7 8h5.6L10 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </button>
-        </div>`).join('');
+        </div>`).join('')}</div>`;
 
   return `
-    <div class="contacts-block">
-      <div class="contacts-block-header">
-        <h2>${title}</h2>
-        <button class="btn btn-primary" onclick="openContactModal('${type}')">
-          <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
-            <path d="M5.5 1v9M1 5.5h9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-          Ajouter
-        </button>
-      </div>
-      ${emptyHtml}
-    </div>`;
+    <div class="contacts-block-header">
+      <span class="contacts-block-title">${title}</span>
+      <button class="btn btn-primary" onclick="openContactModal('${type}')">
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+          <path d="M5.5 1v9M1 5.5h9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        Ajouter
+      </button>
+    </div>
+    ${listHtml}`;
 }
 
 function openContactModal(type = 'bureau_etudes') {
