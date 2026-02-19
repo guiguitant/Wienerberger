@@ -400,6 +400,11 @@ function renderFdesLeft(f) {
       <div class="fdes-intro-text">
         Remplissez chaque section avec les données de votre FDES. Cliquez sur une carte pour accéder au formulaire correspondant.
       </div>
+    </div>
+    <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+      <button class="btn btn-ghost" onclick="exportToExcel()" style="width:100%;justify-content:center;gap:6px">
+        📥 Exporter en Excel
+      </button>
     </div>`;
 }
 
@@ -629,6 +634,42 @@ async function addFdes() {
 
   const ok = await createFdes(nom, statut, deadline, bureau_etudes, verificateur);
   if (ok) { await loadFdes(); closeModal(); }
+}
+
+// ── Export Excel ──
+function exportToExcel() {
+  if (!currentFdes) return;
+
+  const wb = XLSX.utils.book_new();
+
+  // Feuille 1 : Infos FDES
+  const wsInfo = XLSX.utils.aoa_to_sheet([
+    ['Champ',          'Valeur'],
+    ['Nom',            currentFdes.nom],
+    ['Statut',         STATUSES[currentFdes.statut]],
+    ['Deadline',       currentFdes.deadline || '—'],
+    ["Bureau d'études", currentFdes.bureau_etudes || '—'],
+    ['Vérificateur',   currentFdes.verificateur  || '—'],
+    ['Date de création', fmt(currentFdes.created_at)],
+  ]);
+  XLSX.utils.book_append_sheet(wb, wsInfo, 'Infos FDES');
+
+  // Une feuille par section de collecte
+  COLLECTE_ONGLETS.forEach(o => {
+    const rows = [['Champ', 'Valeur', 'Unité']];
+    o.fields.forEach(field => {
+      const d = collecteData[field.champ] || {};
+      rows.push([field.label, d.valeur || '', d.unite || '']);
+    });
+    // Les noms de feuilles Excel sont limités à 31 caractères
+    const sheetName = o.label.replace(/[\\\/\?\*\[\]:]/g, '').substring(0, 31);
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(rows), sheetName);
+  });
+
+  // Nom du fichier
+  const safeName = currentFdes.nom.replace(/[^a-zA-Z0-9À-ÿ \-_]/g, '').trim().replace(/\s+/g, '_');
+  const today    = new Date().toISOString().split('T')[0];
+  XLSX.writeFile(wb, `FDES_${safeName}_${today}.xlsx`);
 }
 
 // ── Raccourcis clavier ──
