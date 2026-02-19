@@ -422,30 +422,77 @@ input[type="text"]::placeholder { color: #c8c8c8; }
   font-size: 13px; color: var(--text-muted); margin-bottom: 24px;
 }
 
-/* Tabs */
-.tabs {
-  display: flex;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 20px;
-  gap: 0;
-  overflow-x: auto;
+/* Grille de sections */
+.collecte-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 4px;
 }
-.tab-btn {
-  padding: 8px 16px;
-  font-size: 13px; font-weight: 500;
-  color: var(--text-muted);
-  background: none; border: none;
-  border-bottom: 2px solid transparent;
-  cursor: pointer; margin-bottom: -1px;
-  white-space: nowrap;
-  transition: color .15s, border-color .15s;
-  font-family: inherit;
-}
-.tab-btn:hover { color: var(--text-secondary); }
-.tab-btn.active { color: var(--text); border-bottom-color: var(--text); }
 
-.tab-panel { display: none; }
-.tab-panel.active { display: block; }
+.section-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px 16px 14px;
+  cursor: pointer;
+  transition: box-shadow .18s, transform .15s, border-color .18s;
+}
+.section-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  border-color: #d4d4d4;
+}
+.section-card.complete {
+  border-color: #86efac;
+  background: #f0fdf4;
+}
+
+.section-card-emoji {
+  font-size: 26px;
+  line-height: 1;
+  margin-bottom: 10px;
+  display: block;
+}
+.section-card-title {
+  font-size: 13px; font-weight: 600;
+  color: var(--text); margin-bottom: 12px;
+}
+
+.section-progress-bar {
+  height: 4px; background: #f0f0f0;
+  border-radius: 2px; overflow: hidden;
+  margin-bottom: 7px;
+}
+.section-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #16a34a, #4ade80);
+  border-radius: 2px;
+  transition: width .35s;
+}
+.section-progress-label {
+  font-size: 11px; color: var(--text-muted);
+}
+.section-card.complete .section-progress-label {
+  color: #15803d; font-weight: 500;
+}
+
+/* En-tête section détail */
+.section-form-header {
+  display: flex; align-items: center; gap: 10px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 4px;
+}
+.section-form-emoji { font-size: 20px; line-height: 1; }
+.section-form-title { font-size: 15px; font-weight: 700; letter-spacing: -.2px; }
+
+@media (max-width: 700px) {
+  .collecte-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 480px) {
+  .collecte-grid { grid-template-columns: 1fr; }
+}
 
 /* Fields */
 .collecte-field {

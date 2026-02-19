@@ -24,6 +24,7 @@ const COLLECTE_ONGLETS = [
   {
     onglet: 'organisation',
     label: 'Organisation',
+    emoji: '🏢',
     fields: [
       { champ: 'nom_societe',   label: 'Nom de la société',    type: 'text',   unite: null },
       { champ: 'nom_referent',  label: 'Nom du référent',      type: 'text',   unite: null },
@@ -34,6 +35,7 @@ const COLLECTE_ONGLETS = [
   {
     onglet: 'infos_generales',
     label: 'Infos générales',
+    emoji: '📋',
     fields: [
       { champ: 'annee_reference',   label: 'Année de référence',           type: 'number', unite: null },
       { champ: 'production_totale', label: 'Production totale du site',    type: 'number', unite: 't'  },
@@ -43,6 +45,7 @@ const COLLECTE_ONGLETS = [
   {
     onglet: 'energie',
     label: 'Énergie',
+    emoji: '⚡',
     fields: [
       { champ: 'gaz_naturel',       label: 'Gaz naturel',       type: 'number', unite: 'm³'   },
       { champ: 'electricite',       label: 'Électricité',       type: 'number', unite: 'kWh'  },
@@ -52,6 +55,7 @@ const COLLECTE_ONGLETS = [
   {
     onglet: 'matieres_premieres',
     label: 'Matières premières',
+    emoji: '🪨',
     fields: [
       { champ: 'eau_potable',    label: 'Eau potable réseau', type: 'number', unite: 'kg'   },
       { champ: 'eau_forage',     label: 'Eau de forage',      type: 'number', unite: 'kg'   },
@@ -63,6 +67,7 @@ const COLLECTE_ONGLETS = [
   {
     onglet: 'emissions_air',
     label: 'Émissions dans l\'air',
+    emoji: '💨',
     fields: [
       { champ: 'co2_fossile',       label: 'CO2 fossile combustion',          type: 'number', unite: 'kg CO2' },
       { champ: 'energie_combustion',label: 'Énergie liée à la combustion GN', type: 'number', unite: 'MJ'    },
@@ -72,6 +77,7 @@ const COLLECTE_ONGLETS = [
   {
     onglet: 'emballages',
     label: 'Emballages',
+    emoji: '📦',
     fields: [
       { champ: 'masse_produit_palette', label: 'Masse produit sur palette', type: 'number', unite: 'kg/palette' },
       { champ: 'type_emballage',        label: "Type d'emballage",          type: 'text',   unite: null        },
@@ -81,6 +87,7 @@ const COLLECTE_ONGLETS = [
   {
     onglet: 'dechets',
     label: 'Déchets',
+    emoji: '🗑️',
     fields: [
       { champ: 'dechets_recycles',  label: 'Déchets recyclés',         type: 'number', unite: 't'  },
       { champ: 'dechets_elimines',  label: 'Déchets éliminés',         type: 'number', unite: 't'  },
@@ -90,6 +97,7 @@ const COLLECTE_ONGLETS = [
   {
     onglet: 'transports',
     label: 'Transports',
+    emoji: '🚛',
     fields: [
       { champ: 'distance_matieres', label: 'Distance transport matières premières', type: 'number', unite: 'km'  },
       { champ: 'type_transport',    label: 'Type de transport',                     type: 'text',   unite: null  },
@@ -100,8 +108,10 @@ const COLLECTE_ONGLETS = [
 
 // ── État global ──
 let fdes = [];
-let currentDetailId  = null;
+let currentDetailId   = null;
 let currentCollecteId = null;
+let currentOngletIdx  = null;  // null = grille, number = section ouverte
+let collecteData      = {};    // { champ: { valeur, unite } }
 
 // ── Utilitaires ──
 function fmt(iso) {
@@ -228,70 +238,127 @@ async function changeStatusFromDetail(id, val) {
 // ── Vue Collecte ──
 async function openCollecte(fdesId) {
   currentCollecteId = fdesId;
+  currentOngletIdx  = null;
   const f = fdes.find(x => x.id === fdesId);
-
-  // Titre
   document.getElementById('collecteFdesName').textContent = f ? f.nom : '';
 
-  // Générer le formulaire
-  renderCollecteForm();
+  // Charger les données Supabase dans collecteData
+  await loadCollecteData(fdesId);
 
-  // Afficher la vue
+  // Afficher la grille
+  renderCollecteGrid();
   document.getElementById('viewDetail').style.display = 'none';
   document.getElementById('viewCollecte').style.display = 'block';
-
-  // Préremplir avec les données existantes
-  await loadCollecteData(fdesId);
 }
 
 function closeCollecte() {
   currentCollecteId = null;
+  currentOngletIdx  = null;
+  collecteData      = {};
   document.getElementById('viewCollecte').style.display = 'none';
   document.getElementById('viewDetail').style.display = 'block';
 }
 
-function renderCollecteForm() {
-  const tabsHtml = COLLECTE_ONGLETS.map((o, i) =>
-    `<button class="tab-btn ${i === 0 ? 'active' : ''}" onclick="switchTab(${i})">${o.label}</button>`
-  ).join('');
+async function loadCollecteData(fdesId) {
+  const { data, error } = await db
+    .from('fdes_collecte')
+    .select('*')
+    .eq('fdes_id', fdesId);
 
-  const panelsHtml = COLLECTE_ONGLETS.map((o, i) =>
-    `<div class="tab-panel ${i === 0 ? 'active' : ''}" id="panel-${i}">
-      ${o.fields.map(renderCollecteField).join('')}
-    </div>`
-  ).join('');
+  if (error) { console.error('Erreur chargement collecte :', error.message); return; }
+
+  collecteData = {};
+  (data || []).forEach(row => {
+    collecteData[row.champ] = { valeur: row.valeur || '', unite: row.unite || '' };
+  });
+}
+
+function getCompletion(onglet) {
+  const total  = onglet.fields.length;
+  const filled = onglet.fields.filter(f => collecteData[f.champ]?.valeur).length;
+  return { filled, total };
+}
+
+function renderCollecteGrid() {
+  const cardsHtml = COLLECTE_ONGLETS.map((o, i) => {
+    const { filled, total } = getCompletion(o);
+    const pct      = total > 0 ? Math.round((filled / total) * 100) : 0;
+    const complete = filled === total && total > 0;
+    return `
+      <div class="section-card${complete ? ' complete' : ''}" onclick="openOnglet(${i})">
+        <span class="section-card-emoji">${o.emoji}</span>
+        <div class="section-card-title">${o.label}</div>
+        <div class="section-progress-bar">
+          <div class="section-progress-fill" style="width:${pct}%"></div>
+        </div>
+        <div class="section-progress-label">${filled}/${total} champs remplis</div>
+      </div>`;
+  }).join('');
+
+  document.getElementById('collecteForm').innerHTML =
+    `<div class="collecte-grid">${cardsHtml}</div>`;
+}
+
+function openOnglet(idx) {
+  currentOngletIdx = idx;
+  const o = COLLECTE_ONGLETS[idx];
 
   document.getElementById('collecteForm').innerHTML = `
-    <div class="tabs">${tabsHtml}</div>
-    ${panelsHtml}
-    <div class="collecte-save-bar">
-      <button class="btn btn-primary" onclick="saveCollecte()" id="saveBtn">Sauvegarder</button>
-      <span class="save-feedback" id="saveFeedback">✓ Données sauvegardées</span>
+    <div class="section-form-header">
+      <button class="btn btn-ghost" onclick="backToGrid()" style="padding:5px 10px;gap:4px">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Retour
+      </button>
+      <span class="section-form-emoji">${o.emoji}</span>
+      <span class="section-form-title">${o.label}</span>
     </div>
-  `;
+    ${o.fields.map(renderCollecteField).join('')}
+    <div class="collecte-save-bar">
+      <button class="btn btn-primary" onclick="saveSection(${idx})" id="saveBtn">Sauvegarder</button>
+      <span class="save-feedback" id="saveFeedback">✓ Sauvegardé</span>
+    </div>`;
+}
+
+function backToGrid() {
+  // Mémoriser les valeurs saisies avant de revenir à la grille
+  if (currentOngletIdx !== null) {
+    COLLECTE_ONGLETS[currentOngletIdx].fields.forEach(field => {
+      const valInput  = document.getElementById(`val_${field.champ}`);
+      const unitInput = document.getElementById(`unit_${field.champ}`);
+      if (!valInput) return;
+      let unite = field.unite === 'libre'
+        ? (unitInput ? unitInput.value.trim() : '')
+        : (field.unite || '');
+      collecteData[field.champ] = { valeur: valInput.value.trim(), unite };
+    });
+  }
+  currentOngletIdx = null;
+  renderCollecteGrid();
 }
 
 function renderCollecteField(field) {
-  let inputHtml;
+  const d   = collecteData[field.champ] || {};
+  const val  = escHtml(d.valeur || '');
+  const unit = escHtml(d.unite  || '');
 
+  let inputHtml;
   if (field.unite === null) {
-    // Champ texte simple, sans unité
     inputHtml = `
       <div class="collecte-input-row">
-        <input type="${field.type}" class="collecte-input" id="val_${field.champ}" placeholder="" />
+        <input type="${field.type}" class="collecte-input" id="val_${field.champ}" value="${val}" />
       </div>`;
   } else if (field.unite === 'libre') {
-    // Valeur + unité libre saisie par l'utilisateur
     inputHtml = `
       <div class="collecte-input-row">
-        <input type="number" class="collecte-input" id="val_${field.champ}" placeholder="0" step="any" />
-        <input type="text" class="collecte-unit-input" id="unit_${field.champ}" placeholder="unité" />
+        <input type="number" class="collecte-input" id="val_${field.champ}" placeholder="0" step="any" value="${val}" />
+        <input type="text" class="collecte-unit-input" id="unit_${field.champ}" placeholder="unité" value="${unit}" />
       </div>`;
   } else {
-    // Valeur + unité fixe
     inputHtml = `
       <div class="collecte-input-row">
-        <input type="number" class="collecte-input" id="val_${field.champ}" placeholder="0" step="any" />
+        <input type="number" class="collecte-input" id="val_${field.champ}" placeholder="0" step="any" value="${val}" />
         <span class="collecte-unit-badge">${field.unite}</span>
       </div>`;
   }
@@ -303,67 +370,46 @@ function renderCollecteField(field) {
     </div>`;
 }
 
-function switchTab(idx) {
-  document.querySelectorAll('.tab-btn').forEach((btn, i) => btn.classList.toggle('active', i === idx));
-  document.querySelectorAll('.tab-panel').forEach((panel, i) => panel.classList.toggle('active', i === idx));
-}
-
-async function loadCollecteData(fdesId) {
-  const { data, error } = await db
-    .from('fdes_collecte')
-    .select('*')
-    .eq('fdes_id', fdesId);
-
-  if (error) { console.error('Erreur chargement collecte :', error.message); return; }
-
-  (data || []).forEach(row => {
-    const valInput  = document.getElementById(`val_${row.champ}`);
-    const unitInput = document.getElementById(`unit_${row.champ}`);
-    if (valInput)  valInput.value  = row.valeur || '';
-    if (unitInput) unitInput.value = row.unite  || '';
-  });
-}
-
-async function saveCollecte() {
+async function saveSection(idx) {
   const saveBtn  = document.getElementById('saveBtn');
   const feedback = document.getElementById('saveFeedback');
   saveBtn.disabled = true;
   saveBtn.textContent = 'Sauvegarde…';
 
-  // Construire les lignes depuis tous les champs
+  // Lire le formulaire et mettre à jour collecteData
+  COLLECTE_ONGLETS[idx].fields.forEach(field => {
+    const valInput  = document.getElementById(`val_${field.champ}`);
+    const unitInput = document.getElementById(`unit_${field.champ}`);
+    if (!valInput) return;
+    const unite = field.unite === 'libre'
+      ? (unitInput ? unitInput.value.trim() : '')
+      : (field.unite || '');
+    collecteData[field.champ] = { valeur: valInput.value.trim(), unite };
+  });
+
+  // Construire toutes les lignes non vides depuis collecteData
   const rows = [];
   COLLECTE_ONGLETS.forEach(o => {
     o.fields.forEach(field => {
-      const valInput  = document.getElementById(`val_${field.champ}`);
-      const unitInput = document.getElementById(`unit_${field.champ}`);
-      if (!valInput) return;
-
-      const valeur = valInput.value.trim();
-      let unite = '';
-      if (field.unite === 'libre') {
-        unite = unitInput ? unitInput.value.trim() : '';
-      } else if (field.unite !== null) {
-        unite = field.unite;
-      }
-
-      rows.push({ fdes_id: currentCollecteId, onglet: o.onglet, champ: field.champ, valeur, unite });
+      const d = collecteData[field.champ];
+      if (!d || d.valeur === '') return;
+      rows.push({ fdes_id: currentCollecteId, onglet: o.onglet, champ: field.champ, valeur: d.valeur, unite: d.unite });
     });
   });
 
-  // Supprimer les anciennes données puis insérer les nouvelles
+  // Delete + insert
   const { error: delError } = await db.from('fdes_collecte').delete().eq('fdes_id', currentCollecteId);
   if (delError) {
-    console.error('Erreur suppression collecte :', delError.message);
+    console.error('Erreur suppression :', delError.message);
     saveBtn.disabled = false;
     saveBtn.textContent = 'Sauvegarder';
     return;
   }
 
-  const nonEmpty = rows.filter(r => r.valeur !== '');
-  if (nonEmpty.length > 0) {
-    const { error: insError } = await db.from('fdes_collecte').insert(nonEmpty);
+  if (rows.length > 0) {
+    const { error: insError } = await db.from('fdes_collecte').insert(rows);
     if (insError) {
-      console.error('Erreur insertion collecte :', insError.message);
+      console.error('Erreur insertion :', insError.message);
       saveBtn.disabled = false;
       saveBtn.textContent = 'Sauvegarder';
       return;
@@ -373,7 +419,10 @@ async function saveCollecte() {
   saveBtn.disabled = false;
   saveBtn.textContent = 'Sauvegarder';
   feedback.classList.add('show');
-  setTimeout(() => feedback.classList.remove('show'), 3000);
+  setTimeout(() => {
+    feedback.classList.remove('show');
+    backToGrid();
+  }, 1200);
 }
 
 // ── Tableau & Stats ──
@@ -490,6 +539,7 @@ async function addFdes() {
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
     if (document.getElementById('overlay').classList.contains('open')) closeModal();
+    else if (currentOngletIdx !== null) backToGrid();
     else if (currentCollecteId !== null) closeCollecte();
     else if (currentDetailId !== null) closeDetail();
   }
