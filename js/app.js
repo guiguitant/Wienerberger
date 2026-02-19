@@ -59,6 +59,42 @@ const COLLECTE_ONGLETS = [
       { champ: 'chamotte',       label: 'Chamotte',           type: 'number', unite: 'kg'   },
       { champ: 'autres_matieres',label: 'Autres matières',    type: 'number', unite: 'libre'},
     ]
+  },
+  {
+    onglet: 'emissions_air',
+    label: 'Émissions dans l\'air',
+    fields: [
+      { champ: 'co2_fossile',       label: 'CO2 fossile combustion',          type: 'number', unite: 'kg CO2' },
+      { champ: 'energie_combustion',label: 'Énergie liée à la combustion GN', type: 'number', unite: 'MJ'    },
+      { champ: 'autres_emissions',  label: 'Autres émissions',                type: 'number', unite: 'libre' },
+    ]
+  },
+  {
+    onglet: 'emballages',
+    label: 'Emballages',
+    fields: [
+      { champ: 'masse_produit_palette', label: 'Masse produit sur palette', type: 'number', unite: 'kg/palette' },
+      { champ: 'type_emballage',        label: "Type d'emballage",          type: 'text',   unite: null        },
+      { champ: 'masse_emballage_total', label: 'Masse emballage total',     type: 'number', unite: 'kg'        },
+    ]
+  },
+  {
+    onglet: 'dechets',
+    label: 'Déchets',
+    fields: [
+      { champ: 'dechets_recycles',  label: 'Déchets recyclés',         type: 'number', unite: 't'  },
+      { champ: 'dechets_elimines',  label: 'Déchets éliminés',         type: 'number', unite: 't'  },
+      { champ: 'code_ler',          label: 'Code LER + description',   type: 'text',   unite: null },
+    ]
+  },
+  {
+    onglet: 'transports',
+    label: 'Transports',
+    fields: [
+      { champ: 'distance_matieres', label: 'Distance transport matières premières', type: 'number', unite: 'km'  },
+      { champ: 'type_transport',    label: 'Type de transport',                     type: 'text',   unite: null  },
+      { champ: 'tonnage_transporte',label: 'Tonnage transporté',                    type: 'number', unite: 'tkm' },
+    ]
   }
 ];
 
