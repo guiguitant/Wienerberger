@@ -342,7 +342,7 @@ function renderFdesRightGrid() {
     const { filled, total } = getCompletion(o);
     const pct      = total > 0 ? Math.round((filled / total) * 100) : 0;
     const complete = filled === total && total > 0;
-    const badgesHtml = o.modules.length
+    const badgesHtml = (o.modules && o.modules.length)
       ? `<div class="section-modules">${o.modules.map(m => `<span class="module-badge">${m}</span>`).join('')}</div>`
       : '';
     return `

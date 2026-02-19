@@ -502,10 +502,11 @@ input[type="text"]::placeholder { color: #c8c8c8; }
   margin-bottom: 12px;
 }
 .module-badge {
-  font-size: 10px; font-weight: 600;
-  color: #6b6b6b; background: #f0f0f0;
-  border-radius: 4px; padding: 2px 6px;
-  letter-spacing: .3px;
+  font-size: 10px; font-weight: 700;
+  color: #374151; background: #e4e4e7;
+  border: 1px solid #d1d5db;
+  border-radius: 4px; padding: 2px 7px;
+  letter-spacing: .4px;
 }
 
 .section-progress-bar {
