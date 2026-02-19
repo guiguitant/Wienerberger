@@ -26,10 +26,10 @@ const COLLECTE_ONGLETS = [
     label: 'Organisation',
     emoji: '🏢',
     fields: [
-      { champ: 'nom_societe',   label: 'Nom de la société',    type: 'text',   unite: null },
-      { champ: 'nom_referent',  label: 'Nom du référent',      type: 'text',   unite: null },
-      { champ: 'email_referent',label: 'Email du référent',    type: 'email',  unite: null },
-      { champ: 'nom_usine',     label: "Nom de l'usine / site",type: 'text',   unite: null },
+      { champ: 'nom_societe',   label: 'Nom de la société',     type: 'text',  unite: null },
+      { champ: 'nom_referent',  label: 'Nom du référent',       type: 'text',  unite: null },
+      { champ: 'email_referent',label: 'Email du référent',     type: 'email', unite: null },
+      { champ: 'nom_usine',     label: "Nom de l'usine / site", type: 'text',  unite: null },
     ]
   },
   {
@@ -37,9 +37,9 @@ const COLLECTE_ONGLETS = [
     label: 'Infos générales',
     emoji: '📋',
     fields: [
-      { champ: 'annee_reference',   label: 'Année de référence',           type: 'number', unite: null },
-      { champ: 'production_totale', label: 'Production totale du site',    type: 'number', unite: 't'  },
-      { champ: 'casse_cuite',       label: 'Casse cuite totale du site',   type: 'number', unite: 't'  },
+      { champ: 'annee_reference',   label: 'Année de référence',         type: 'number', unite: null },
+      { champ: 'production_totale', label: 'Production totale du site',  type: 'number', unite: 't'  },
+      { champ: 'casse_cuite',       label: 'Casse cuite totale du site', type: 'number', unite: 't'  },
     ]
   },
   {
@@ -47,9 +47,9 @@ const COLLECTE_ONGLETS = [
     label: 'Énergie',
     emoji: '⚡',
     fields: [
-      { champ: 'gaz_naturel',       label: 'Gaz naturel',       type: 'number', unite: 'm³'   },
-      { champ: 'electricite',       label: 'Électricité',       type: 'number', unite: 'kWh'  },
-      { champ: 'autre_combustible', label: 'Autre combustible', type: 'number', unite: 'libre'},
+      { champ: 'gaz_naturel',       label: 'Gaz naturel',       type: 'number', unite: 'm³'    },
+      { champ: 'electricite',       label: 'Électricité',       type: 'number', unite: 'kWh'   },
+      { champ: 'autre_combustible', label: 'Autre combustible', type: 'number', unite: 'libre' },
     ]
   },
   {
@@ -57,16 +57,16 @@ const COLLECTE_ONGLETS = [
     label: 'Matières premières',
     emoji: '🪨',
     fields: [
-      { champ: 'eau_potable',    label: 'Eau potable réseau', type: 'number', unite: 'kg'   },
-      { champ: 'eau_forage',     label: 'Eau de forage',      type: 'number', unite: 'kg'   },
-      { champ: 'argiles',        label: 'Argiles',            type: 'number', unite: 'kg'   },
-      { champ: 'chamotte',       label: 'Chamotte',           type: 'number', unite: 'kg'   },
-      { champ: 'autres_matieres',label: 'Autres matières',    type: 'number', unite: 'libre'},
+      { champ: 'eau_potable',    label: 'Eau potable réseau', type: 'number', unite: 'kg'    },
+      { champ: 'eau_forage',     label: 'Eau de forage',      type: 'number', unite: 'kg'    },
+      { champ: 'argiles',        label: 'Argiles',            type: 'number', unite: 'kg'    },
+      { champ: 'chamotte',       label: 'Chamotte',           type: 'number', unite: 'kg'    },
+      { champ: 'autres_matieres',label: 'Autres matières',    type: 'number', unite: 'libre' },
     ]
   },
   {
     onglet: 'emissions_air',
-    label: 'Émissions dans l\'air',
+    label: "Émissions dans l'air",
     emoji: '💨',
     fields: [
       { champ: 'co2_fossile',       label: 'CO2 fossile combustion',          type: 'number', unite: 'kg CO2' },
@@ -80,8 +80,8 @@ const COLLECTE_ONGLETS = [
     emoji: '📦',
     fields: [
       { champ: 'masse_produit_palette', label: 'Masse produit sur palette', type: 'number', unite: 'kg/palette' },
-      { champ: 'type_emballage',        label: "Type d'emballage",          type: 'text',   unite: null        },
-      { champ: 'masse_emballage_total', label: 'Masse emballage total',     type: 'number', unite: 'kg'        },
+      { champ: 'type_emballage',        label: "Type d'emballage",          type: 'text',   unite: null         },
+      { champ: 'masse_emballage_total', label: 'Masse emballage total',     type: 'number', unite: 'kg'         },
     ]
   },
   {
@@ -89,9 +89,9 @@ const COLLECTE_ONGLETS = [
     label: 'Déchets',
     emoji: '🗑️',
     fields: [
-      { champ: 'dechets_recycles',  label: 'Déchets recyclés',         type: 'number', unite: 't'  },
-      { champ: 'dechets_elimines',  label: 'Déchets éliminés',         type: 'number', unite: 't'  },
-      { champ: 'code_ler',          label: 'Code LER + description',   type: 'text',   unite: null },
+      { champ: 'dechets_recycles', label: 'Déchets recyclés',       type: 'number', unite: 't'   },
+      { champ: 'dechets_elimines', label: 'Déchets éliminés',       type: 'number', unite: 't'   },
+      { champ: 'code_ler',         label: 'Code LER + description', type: 'text',   unite: null  },
     ]
   },
   {
@@ -107,11 +107,11 @@ const COLLECTE_ONGLETS = [
 ];
 
 // ── État global ──
-let fdes = [];
-let currentDetailId   = null;
+let fdes            = [];
+let currentFdes     = null;   // FDES actuellement ouverte
 let currentCollecteId = null;
-let currentOngletIdx  = null;  // null = grille, number = section ouverte
-let collecteData      = {};    // { champ: { valeur, unite } }
+let currentOngletIdx  = null; // null = grille, number = section ouverte
+let collecteData      = {};   // { champ: { valeur, unite } }
 
 // ── Utilitaires ──
 function fmt(iso) {
@@ -132,11 +132,26 @@ function deadlineChip(deadline) {
   if (!deadline) return '<span style="color:var(--text-muted);font-size:12px">—</span>';
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const dl = new Date(deadline + 'T00:00:00');
+  const dl   = new Date(deadline + 'T00:00:00');
   const diff = Math.round((dl - today) / 86400000);
   if (diff < 0)  return `<span class="deadline-chip dl-late">Dépassée (${Math.abs(diff)}j)</span>`;
   if (diff <= 7) return `<span class="deadline-chip dl-warn">Dans ${diff} jour${diff > 1 ? 's' : ''}</span>`;
   return `<span class="deadline-chip dl-ok">${dl.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })}</span>`;
+}
+
+function getCompletion(onglet) {
+  const total  = onglet.fields.length;
+  const filled = onglet.fields.filter(f => collecteData[f.champ]?.valeur).length;
+  return { filled, total };
+}
+
+function getGlobalProgress() {
+  let total = 0, filled = 0;
+  COLLECTE_ONGLETS.forEach(o => o.fields.forEach(f => {
+    total++;
+    if (collecteData[f.champ]?.valeur) filled++;
+  }));
+  return { filled, total, pct: total > 0 ? Math.round(filled / total * 100) : 0 };
 }
 
 // ── Supabase : FDES ──
@@ -155,7 +170,7 @@ async function createFdes(nom, statut, deadline, bureau_etudes) {
   const { error } = await db.from('fdes').insert({
     nom,
     statut,
-    deadline: deadline || null,
+    deadline:     deadline      || null,
     bureau_etudes: bureau_etudes || null
   });
   if (error) { console.error('Erreur création :', error.message); return false; }
@@ -174,91 +189,7 @@ async function removeFdes(id) {
   return true;
 }
 
-// ── Vue Détail ──
-function openDetail(id) {
-  currentDetailId = id;
-  const f = fdes.find(x => x.id === id);
-  if (!f) return;
-  renderDetail(f);
-  document.getElementById('viewDashboard').style.display = 'none';
-  document.getElementById('viewDetail').style.display = 'block';
-}
-
-function closeDetail() {
-  currentDetailId = null;
-  document.getElementById('viewDashboard').style.display = '';
-  document.getElementById('viewDetail').style.display = 'none';
-}
-
-function renderDetail(f) {
-  document.getElementById('detailCard').innerHTML = `
-    <div class="detail-name">${escHtml(f.nom)}</div>
-    <div class="detail-actions">
-      <button class="btn btn-primary" onclick="openCollecte('${f.id}')">
-        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-          <path d="M1 2h11M1 6.5h11M1 11h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-        </svg>
-        Formulaire de collecte
-      </button>
-    </div>
-    <div class="detail-field">
-      <div class="detail-field-label">Statut</div>
-      <span class="status-badge s${f.statut}" style="font-size:13px">
-        <select class="status-select" style="font-size:13px;padding:7px 28px 7px 12px"
-                onchange="changeStatusFromDetail('${f.id}', this.value)">
-          ${STATUSES.map((s, si) => `<option value="${si}" ${si === f.statut ? 'selected' : ''}>${s}</option>`).join('')}
-        </select>
-      </span>
-    </div>
-    <div class="detail-field">
-      <div class="detail-field-label">Bureau d'études</div>
-      <span style="font-size:14px;color:var(--text-secondary)">${escHtml(f.bureau_etudes) || '<span style="color:var(--text-muted)">—</span>'}</span>
-    </div>
-    <div class="detail-field">
-      <div class="detail-field-label">Deadline</div>
-      ${deadlineChip(f.deadline)}
-    </div>
-    <div class="detail-field">
-      <div class="detail-field-label">Ajoutée le</div>
-      <span style="font-size:14px;color:var(--text-secondary)">${fmt(f.created_at)}</span>
-    </div>
-  `;
-}
-
-async function changeStatusFromDetail(id, val) {
-  const ok = await updateStatut(id, parseInt(val));
-  if (!ok) return;
-  await loadFdes();
-  if (currentDetailId !== null) {
-    const f = fdes.find(x => x.id === currentDetailId);
-    if (f) renderDetail(f);
-  }
-}
-
-// ── Vue Collecte ──
-async function openCollecte(fdesId) {
-  currentCollecteId = fdesId;
-  currentOngletIdx  = null;
-  const f = fdes.find(x => x.id === fdesId);
-  document.getElementById('collecteFdesName').textContent = f ? f.nom : '';
-
-  // Charger les données Supabase dans collecteData
-  await loadCollecteData(fdesId);
-
-  // Afficher la grille
-  renderCollecteGrid();
-  document.getElementById('viewDetail').style.display = 'none';
-  document.getElementById('viewCollecte').style.display = 'block';
-}
-
-function closeCollecte() {
-  currentCollecteId = null;
-  currentOngletIdx  = null;
-  collecteData      = {};
-  document.getElementById('viewCollecte').style.display = 'none';
-  document.getElementById('viewDetail').style.display = 'block';
-}
-
+// ── Supabase : Collecte ──
 async function loadCollecteData(fdesId) {
   const { data, error } = await db
     .from('fdes_collecte')
@@ -266,26 +197,120 @@ async function loadCollecteData(fdesId) {
     .eq('fdes_id', fdesId);
 
   if (error) { console.error('Erreur chargement collecte :', error.message); return; }
-
   collecteData = {};
   (data || []).forEach(row => {
     collecteData[row.champ] = { valeur: row.valeur || '', unite: row.unite || '' };
   });
 }
 
-function getCompletion(onglet) {
-  const total  = onglet.fields.length;
-  const filled = onglet.fields.filter(f => collecteData[f.champ]?.valeur).length;
-  return { filled, total };
+// ── Navigation : page FDES unifiée ──
+async function openFdes(id) {
+  currentFdes       = fdes.find(x => x.id === id);
+  currentCollecteId = id;
+  currentOngletIdx  = null;
+
+  if (!currentFdes) return;
+
+  // Charger les données de collecte
+  await loadCollecteData(id);
+
+  // Afficher la page
+  document.getElementById('viewDashboard').style.display = 'none';
+  document.getElementById('viewFdes').style.display = 'block';
+
+  // Rendre les deux colonnes
+  renderFdesLeft(currentFdes);
+  renderFdesRightGrid();
 }
 
-function renderCollecteGrid() {
+function closeFdes() {
+  currentFdes       = null;
+  currentCollecteId = null;
+  currentOngletIdx  = null;
+  collecteData      = {};
+  document.getElementById('viewFdes').style.display = 'none';
+  document.getElementById('viewDashboard').style.display = '';
+}
+
+// ── Colonne gauche ──
+function renderFdesLeft(f) {
+  const { filled, total, pct } = getGlobalProgress();
+
+  document.getElementById('fdesInfoCard').innerHTML = `
+    <div class="fdes-name">${escHtml(f.nom)}</div>
+
+    <div class="fdes-info-row">
+      <div class="fdes-info-label">Statut</div>
+      <span class="status-badge s${f.statut}">
+        <select class="status-select" onchange="changeStatusInline('${f.id}', this.value)">
+          ${STATUSES.map((s, si) => `<option value="${si}" ${si === f.statut ? 'selected' : ''}>${s}</option>`).join('')}
+        </select>
+      </span>
+    </div>
+
+    <div class="fdes-info-row">
+      <div class="fdes-info-label">Deadline</div>
+      <div>${deadlineChip(f.deadline)}</div>
+    </div>
+
+    <div class="fdes-info-row">
+      <div class="fdes-info-label">Bureau d'études</div>
+      <div class="fdes-info-value">${escHtml(f.bureau_etudes) || '<span style="color:var(--text-muted)">—</span>'}</div>
+    </div>
+
+    <div class="fdes-info-row">
+      <div class="fdes-info-label">Vérificateur</div>
+      <div class="fdes-info-value">${escHtml(f.verificateur) || '<span style="color:var(--text-muted)">—</span>'}</div>
+    </div>
+
+    <div class="fdes-info-row">
+      <div class="fdes-info-label">Créée le</div>
+      <div class="fdes-info-value">${fmt(f.created_at)}</div>
+    </div>
+
+    <div class="fdes-info-row" style="border-bottom:none;padding-bottom:0">
+      <div class="fdes-info-label">Notes</div>
+      <div class="fdes-info-value">${escHtml(f.notes) || '<span style="color:var(--text-muted)">—</span>'}</div>
+    </div>
+
+    <div class="fdes-progress-section">
+      <div class="fdes-progress-header">
+        <span class="fdes-progress-label">Collecte globale</span>
+        <span class="fdes-progress-pct" id="fdesGlobalPct">${pct}%</span>
+      </div>
+      <div class="fdes-global-bar">
+        <div class="fdes-global-fill" id="fdesGlobalFill" style="width:${pct}%"></div>
+      </div>
+      <div class="fdes-intro-text">
+        Remplissez chaque section avec les données de votre FDES. Cliquez sur une carte pour accéder au formulaire correspondant.
+      </div>
+    </div>
+  `;
+}
+
+function updateFdesLeftProgress() {
+  const { filled, total, pct } = getGlobalProgress();
+  const pctEl  = document.getElementById('fdesGlobalPct');
+  const fillEl = document.getElementById('fdesGlobalFill');
+  if (pctEl)  pctEl.textContent    = pct + '%';
+  if (fillEl) fillEl.style.width   = pct + '%';
+}
+
+async function changeStatusInline(id, val) {
+  await updateStatut(id, parseInt(val));
+  await loadFdes();
+  currentFdes = fdes.find(x => x.id === id);
+  if (currentFdes) renderFdesLeft(currentFdes);
+}
+
+// ── Colonne droite : grille ──
+function renderFdesRightGrid() {
   const cardsHtml = COLLECTE_ONGLETS.map((o, i) => {
     const { filled, total } = getCompletion(o);
     const pct      = total > 0 ? Math.round((filled / total) * 100) : 0;
     const complete = filled === total && total > 0;
     return `
-      <div class="section-card${complete ? ' complete' : ''}" onclick="openOnglet(${i})">
+      <div class="section-card${complete ? ' complete' : ''}" onclick="openOngletRight(${i})">
         <span class="section-card-emoji">${o.emoji}</span>
         <div class="section-card-title">${o.label}</div>
         <div class="section-progress-bar">
@@ -295,21 +320,22 @@ function renderCollecteGrid() {
       </div>`;
   }).join('');
 
-  document.getElementById('collecteForm').innerHTML =
+  document.getElementById('fdesRightContent').innerHTML =
     `<div class="collecte-grid">${cardsHtml}</div>`;
 }
 
-function openOnglet(idx) {
+// ── Colonne droite : formulaire section ──
+function openOngletRight(idx) {
   currentOngletIdx = idx;
   const o = COLLECTE_ONGLETS[idx];
 
-  document.getElementById('collecteForm').innerHTML = `
+  document.getElementById('fdesRightContent').innerHTML = `
     <div class="section-form-header">
-      <button class="btn btn-ghost" onclick="backToGrid()" style="padding:5px 10px;gap:4px">
+      <button class="btn btn-ghost" onclick="backToGridRight()" style="padding:5px 10px;gap:4px">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
           <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        Retour
+        Retour aux sections
       </button>
       <span class="section-form-emoji">${o.emoji}</span>
       <span class="section-form-title">${o.label}</span>
@@ -321,21 +347,22 @@ function openOnglet(idx) {
     </div>`;
 }
 
-function backToGrid() {
-  // Mémoriser les valeurs saisies avant de revenir à la grille
+function backToGridRight() {
+  // Mémoriser les valeurs du formulaire avant de revenir
   if (currentOngletIdx !== null) {
     COLLECTE_ONGLETS[currentOngletIdx].fields.forEach(field => {
       const valInput  = document.getElementById(`val_${field.champ}`);
       const unitInput = document.getElementById(`unit_${field.champ}`);
       if (!valInput) return;
-      let unite = field.unite === 'libre'
+      const unite = field.unite === 'libre'
         ? (unitInput ? unitInput.value.trim() : '')
         : (field.unite || '');
       collecteData[field.champ] = { valeur: valInput.value.trim(), unite };
     });
   }
   currentOngletIdx = null;
-  renderCollecteGrid();
+  renderFdesRightGrid();
+  updateFdesLeftProgress();
 }
 
 function renderCollecteField(field) {
@@ -421,15 +448,15 @@ async function saveSection(idx) {
   feedback.classList.add('show');
   setTimeout(() => {
     feedback.classList.remove('show');
-    backToGrid();
+    backToGridRight();
   }, 1200);
 }
 
-// ── Tableau & Stats ──
+// ── Tableau & Stats (dashboard) ──
 function render() {
-  const tbody      = document.getElementById('tbody');
-  const empty      = document.getElementById('empty');
-  const stats      = document.getElementById('stats');
+  const tbody       = document.getElementById('tbody');
+  const empty       = document.getElementById('empty');
+  const stats       = document.getElementById('stats');
   const progressRow = document.getElementById('progressRow');
 
   const counts = [0, 0, 0, 0, 0, 0];
@@ -459,7 +486,7 @@ function render() {
   empty.style.display = 'none';
 
   tbody.innerHTML = fdes.map((f, i) => `
-    <tr onclick="openDetail('${f.id}')">
+    <tr onclick="openFdes('${f.id}')">
       <td style="color:var(--text-muted);font-size:12px">${String(i + 1).padStart(2, '0')}</td>
       <td style="font-weight:500">${escHtml(f.nom)}</td>
       <td style="color:var(--text-secondary);font-size:13px">${escHtml(f.bureau_etudes) || '<span style="color:var(--text-muted)">—</span>'}</td>
@@ -519,11 +546,11 @@ function handleOverlayClick(e) {
 }
 
 async function addFdes() {
-  const nom          = document.getElementById('inputName').value.trim();
+  const nom           = document.getElementById('inputName').value.trim();
   const bureau_etudes = document.getElementById('inputBureau').value.trim();
-  const statut       = parseInt(document.getElementById('inputStatus').value);
-  const deadline     = document.getElementById('inputDeadline').value;
-  const err          = document.getElementById('errName');
+  const statut        = parseInt(document.getElementById('inputStatus').value);
+  const deadline      = document.getElementById('inputDeadline').value;
+  const err           = document.getElementById('errName');
 
   if (!nom) { err.classList.add('show'); return; }
   err.classList.remove('show');
@@ -539,9 +566,8 @@ async function addFdes() {
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
     if (document.getElementById('overlay').classList.contains('open')) closeModal();
-    else if (currentOngletIdx !== null) backToGrid();
-    else if (currentCollecteId !== null) closeCollecte();
-    else if (currentDetailId !== null) closeDetail();
+    else if (currentOngletIdx !== null) backToGridRight();
+    else if (currentCollecteId !== null) closeFdes();
   }
 });
 
