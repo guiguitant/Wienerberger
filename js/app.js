@@ -103,6 +103,29 @@ const COLLECTE_ONGLETS = [
       { champ: 'type_transport',    label: 'Type de transport',                     type: 'text',   unite: null  },
       { champ: 'tonnage_transporte',label: 'Tonnage transporté',                    type: 'number', unite: 'tkm' },
     ]
+  },
+  {
+    onglet: 'mise_en_oeuvre',
+    label: 'Mise en œuvre',
+    emoji: '🔧',
+    fields: [
+      { champ: 'type_fixation',       label: 'Type de fixation',          type: 'text',   unite: null    },
+      { champ: 'masse_agrafe',        label: 'Masse agrafe / vis',        type: 'number', unite: 'kg/m²' },
+      { champ: 'matiere_agrafe',      label: 'Matière agrafe',            type: 'text',   unite: null    },
+      { champ: 'nb_vis_par_agrafe',   label: 'Nombre de vis par agrafe',  type: 'number', unite: null    },
+    ]
+  },
+  {
+    onglet: 'fin_de_vie',
+    label: 'Fin de vie',
+    emoji: '♻️',
+    fields: [
+      { champ: 'qte_collectee',       label: 'Quantité collectée séparément',    type: 'number', unite: 'kg' },
+      { champ: 'qte_recyclage',       label: 'Quantité destinée au recyclage',   type: 'number', unite: 'kg' },
+      { champ: 'qte_enfouie',         label: 'Quantité enfouie',                 type: 'number', unite: 'kg' },
+      { champ: 'dist_stockage',       label: 'Distance centre de stockage',      type: 'number', unite: 'km' },
+      { champ: 'taux_recyclage',      label: 'Taux de recyclage',                type: 'number', unite: '%'  },
+    ]
   }
 ];
 
